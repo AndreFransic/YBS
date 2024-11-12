@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>御笔书</title>
+	<script src="js/main.js"></script>
+</head>
+<body>
+    <div class="tab">
+		<div class="tab-right">
+			<div class="dropdown">
+			  <button class="dropbtn">菜单</button>
+			  <div class="dropdown-content">
+				  <button id="GameOpen">小游戏</button>
+			  </div>
+			</div>
+		</div>
+		<div id="GameWindow" class="game">
+			<div class="game-content">
+				<div class="GameMap">
+					<div class="dino"></div>
+					<div class="tree"></div>
+					<div class="coin"></div>
+					<input type="text" id="score" readonly>
+				</div>
+				<span id="CloseGame" class="closeButton">X</span>
+			</div>
+		</div>
+        <div class="tablist">
+            <ul>
+                <li data-background="img/bgimg1.jpg">好看的</li>
+                <li data-background="img/bgimg2.jpg">好玩的</li>
+                <li data-background="img/bgimg3.jpg">好吃的</li>
+            </ul>
+        </div>
+    </div>
+    <div class="body">
+        <div class="content" style="display: block;">
+            <div class="carousel">
+                <div class="slide"><img src="img/1.jpg" alt="" /></div>
+                <div class="slide"><img src="img/2.jpg" alt="" /></div>
+                <div class="slide"><img src="img/3.jpg" alt="" /></div>
+            </div>
+            <div class="indicator">
+                <span class="active"></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="content">
+            <div class="carousel">
+                <div class="slide"><img src="img/4.png" alt="" /></div>
+                <div class="slide"><img src="img/5.jpg" alt="" /></div>
+                <div class="slide"><img src="img/6.jpg" alt="" /></div>
+            </div>
+            <div class="indicator">
+                <span class="active"></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="content">
+            <div class="carousel">
+                <div class="slide"><img src="img/7.jpg" alt="" /></div>
+                <div class="slide"><img src="img/8.jpg" alt="" /></div>
+                <div class="slide"><img src="img/9.png" alt="" /></div>
+            </div>
+            <div class="indicator">
+                <span class="active"></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+    <script>
+		//tab切换
+        // 获取li
+        const lis = document.querySelectorAll(".tablist li");
+        // 获取content
+        const contents = document.querySelectorAll(".content");
+		
+		// 设置默认背景图
+		document.body.style.backgroundImage = `url(${lis[0].getAttribute('data-background')})`;
+        
+        for (let i = 0; i < lis.length; i++) {
+			//绑定click
+            lis[i].onclick = function () {
+                for (let j = 0; j < lis.length; j++) {
+                    lis[j].style.backgroundColor = "";
+                    lis[j].style.boxShadow = "";
+                    contents[j].style.display = "none";
+                }
+                this.style.backgroundColor = "rgba(104, 179, 211, 0.7)";
+                this.style.boxShadow = "0 0 20px 10px rgba(104, 179, 211, 0.8)";
+                contents[i].style.display = "block";
+				//tab切换之后切换背景图
+				document.body.style.backgroundImage = `url(${this.getAttribute('data-background')})`;
+                // 重新初始化轮播图
+                initCarousel(i);
+            };
+        }
+
+        // 轮播图初始化函数
+        function initCarousel(index) {
+            const carousel = document.querySelectorAll('.carousel')[index];
+            const slides = carousel.querySelectorAll('.slide');
+            const indicators = carousel.nextElementSibling.querySelectorAll('span');
+            
+            let current = 0;
+            
+            function moveTo(nextIndex) {
+                const totalSlides = slides.length;
+                const offset = -nextIndex * 100;
+                carousel.style.transform = `translateX(${offset}%)`;
+                indicators.forEach((span, idx) => {
+                    span.classList.remove('active');
+                    if (idx === nextIndex) {
+                        span.classList.add('active');
+                    }
+                });
+                current = nextIndex;
+            }
+            
+            indicators.forEach((item, i) => {
+                item.onclick = function () {
+                    moveTo(i);
+                };
+            });
+            
+            // 自动轮播
+            const interval = setInterval(() => {
+                let nextIndex = (current + 1) % slides.length;
+                moveTo(nextIndex);
+            }, 6000);
+        }
+        
+        // 初始化所有轮播图
+        for (let i = 0; i < contents.length; i++) {
+            initCarousel(i);
+        }
+		//下拉菜单
+		// 获取下拉按钮和下拉内容
+		var dropdown = document.querySelector('.dropdown .dropbtn');
+		var dropdownContent = document.querySelector('.dropdown-content');
+		
+		// 为下拉按钮添加点击事件
+		dropdown.onclick = function(event) {
+		  event.preventDefault(); // 防止默认事件
+		  // 切换下拉内容的显示和隐藏
+		  dropdownContent.classList.toggle('show');
+		};
+		
+		// 点击页面其他地方时隐藏下拉菜单
+		window.onclick = function(event) {
+		  if (!event.target.matches('.dropbtn') && !dropdownContent.contains(event.target)) {
+		    if (dropdownContent.classList.contains('show')) {
+		      dropdownContent.classList.remove('show');
+		    }
+		  }
+		};
+		//小游戏:
+		//窗口部分
+		//获取元素/定义变量
+		const dino = document.querySelector('.dino')
+		const tree = document.querySelector('.tree')
+		const gameMap = document.querySelector('.GameMap');
+		var OpenG = document.getElementById('GameOpen');
+		var GamePage = document.getElementById('GameWindow');
+		var CloseG = document.getElementById('CloseGame');
+		var coin = document.querySelector('.coin');
+		var score = 0;
+		var scoreInput = document.getElementById('score');
+		
+		OpenG.onclick = function() {
+			GamePage.style.display = "block";
+		}
+		CloseG.onclick = function() {
+			GamePage.style.display = "none";
+		}
+		//游戏内容:
+		function createCoin() {
+		    // 移除旧的coin
+		    if (coin) {
+		      gameMap.removeChild(coin);
+		    }
+		    // 创建新的coin元素
+		    coin = document.createElement('div');
+		    coin.classList.add('coin');
+		    // 添加到游戏地图
+		    gameMap.appendChild(coin);
+		  }
+		
+		  // 初始化游戏时创建coin
+		createCoin();
+		
+		//空格跳跃
+		window.addEventListener("keydown", event =>{
+			console.log(event)
+			if (event.code == 'Space'){
+				dino.classList.add("jumpClass");
+				
+				setTimeout(() => {
+					dino.classList.remove("jumpClass")
+				},600);
+			}
+		});
+		//模拟障碍碰撞
+		setInterval(() => {
+			const dinoBottom = parseFloat(
+			  getComputedStyle(dino).getPropertyValue('bottom')
+			);
+			const treeLeft = parseFloat(
+			  getComputedStyle(tree).getPropertyValue('left')
+			);
+			if (treeLeft < 40 && treeLeft > -20 && dinoBottom <=20) {
+				alert('游戏结束')
+				GamePage.style.display = 'none';
+			}
+		},100);
+		//模拟金币碰撞体积
+		setInterval(() => {
+			const dinoBottom = parseFloat(
+			  getComputedStyle(dino).getPropertyValue('bottom')
+			);
+			const coinLeft = parseFloat(
+			  getComputedStyle(coin).getPropertyValue('left')
+			);
+			if (coinLeft < 40 && coinLeft > -20 && dinoBottom <= 15) {
+				createCoin();
+				score++; // 更新分数
+				scoreInput.value = score;
+			}
+		},100);
+    </script>
+</body>
+</html>
